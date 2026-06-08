@@ -131,6 +131,26 @@ class BrowserSkill:
         return entry
 
     # ------------------------------------------------------------------
+    # Safe screenshot helper
+    # ------------------------------------------------------------------
+
+    async def _safe_screenshot(
+        self,
+        page: Page,
+        path: Path,
+        label: str,
+        session_actions: List[Dict],
+        screenshots: List[str],
+    ) -> None:
+        """Take a screenshot with a short timeout; log failure but never crash the session."""
+        try:
+            await page.screenshot(path=str(path), full_page=False, timeout=8_000)
+            screenshots.append(f"screenshots/{path.name}")
+            self._log("screenshot", label, page.url, "success", session_actions)
+        except Exception as exc:
+            self._log("screenshot", label, page.url, f"skipped: {exc.__class__.__name__}", session_actions)
+
+    # ------------------------------------------------------------------
     # Main entry point
     # ------------------------------------------------------------------
 
@@ -198,9 +218,7 @@ class BrowserSkill:
             # ---- Action 2: screenshot (initial) ----------------------------
             slug = name.lower().replace(" ", "_")
             sc1 = self.screenshots_dir / f"{slug}_1_initial.png"
-            await page.screenshot(path=str(sc1), full_page=False)
-            screenshots.append(f"screenshots/{sc1.name}")
-            self._log("screenshot", f"{name} — initial state", actual_url, "success", session_actions)
+            await self._safe_screenshot(page, sc1, f"{name} — initial state", session_actions, screenshots)
 
             # ---- Action 3: tool-specific interactions ----------------------
             extractor = self._get_extractor(name)
@@ -217,9 +235,7 @@ class BrowserSkill:
 
             # ---- Action 5: screenshot (final state) ------------------------
             sc2 = self.screenshots_dir / f"{slug}_2_final.png"
-            await page.screenshot(path=str(sc2), full_page=False)
-            screenshots.append(f"screenshots/{sc2.name}")
-            self._log("screenshot", f"{name} — final state", page.url, "success", session_actions)
+            await self._safe_screenshot(page, sc2, f"{name} — final state", session_actions, screenshots)
 
         except Exception as exc:
             self._log("error", f"{name} session", url, f"failure: {exc}", session_actions)
@@ -271,9 +287,7 @@ class BrowserSkill:
         self._log("scroll", "Scroll to reveal all plan tiers", page.url, "success", actions)
 
         sc = self.screenshots_dir / "github_copilot_plans.png"
-        await page.screenshot(path=str(sc), full_page=False)
-        screenshots.append(f"screenshots/{sc.name}")
-        self._log("screenshot", "Plan cards visible", page.url, "success", actions)
+        await self._safe_screenshot(page, sc, "GitHub Copilot — plan cards visible", actions, screenshots)
         return actions, screenshots
 
     async def _interact_cursor(
@@ -309,9 +323,7 @@ class BrowserSkill:
         self._log("scroll", "Scroll to feature comparison rows", page.url, "success", actions)
 
         sc = self.screenshots_dir / "cursor_pricing.png"
-        await page.screenshot(path=str(sc), full_page=False)
-        screenshots.append(f"screenshots/{sc.name}")
-        self._log("screenshot", "Cursor pricing grid", page.url, "success", actions)
+        await self._safe_screenshot(page, sc, "Cursor — pricing grid", actions, screenshots)
         return actions, screenshots
 
     async def _interact_windsurf(
@@ -343,9 +355,7 @@ class BrowserSkill:
         self._log("scroll", "Scroll to reveal plan feature details", page.url, "success", actions)
 
         sc = self.screenshots_dir / "windsurf_pricing.png"
-        await page.screenshot(path=str(sc), full_page=False)
-        screenshots.append(f"screenshots/{sc.name}")
-        self._log("screenshot", "Windsurf plan cards", page.url, "success", actions)
+        await self._safe_screenshot(page, sc, "Windsurf — plan cards", actions, screenshots)
         return actions, screenshots
 
     async def _interact_replit(
@@ -375,9 +385,7 @@ class BrowserSkill:
         self._log("scroll", "Scroll to full plan tier details", page.url, "success", actions)
 
         sc = self.screenshots_dir / "replit_pricing.png"
-        await page.screenshot(path=str(sc), full_page=False)
-        screenshots.append(f"screenshots/{sc.name}")
-        self._log("screenshot", "Replit pricing page", page.url, "success", actions)
+        await self._safe_screenshot(page, sc, "Replit — pricing page", actions, screenshots)
         return actions, screenshots
 
     async def _interact_tabnine(
@@ -407,9 +415,7 @@ class BrowserSkill:
         self._log("scroll", "Scroll to feature comparison section", page.url, "success", actions)
 
         sc = self.screenshots_dir / "tabnine_pricing.png"
-        await page.screenshot(path=str(sc), full_page=False)
-        screenshots.append(f"screenshots/{sc.name}")
-        self._log("screenshot", "Tabnine pricing tiers", page.url, "success", actions)
+        await self._safe_screenshot(page, sc, "Tabnine — pricing tiers", actions, screenshots)
         return actions, screenshots
 
     async def _interact_generic(
