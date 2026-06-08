@@ -1,0 +1,9 @@
+tool,free_plan,paid_plan,starting_price,key_features,source_url,notes
+GitHub Copilot,"Free (individual): 2,000 code completions/month, 50 chat messages/month",Copilot Pro / Business / Enterprise,$10/month,"Multi-model AI (GPT-4o, Claude, Gemini), inline suggestions, GitHub Chat, CLI, PR summaries, code review",https://github.com/features/copilot/plans,N/A
+Cursor,"Hobby (Free): 2,000 completions, 50 slow premium requests/month",Pro,$20/month,"GPT-4 / Claude completions, Composer agent, multi-file edits, codebase indexing, terminal commands",https://cursor.com/pricing,N/A
+Windsurf,Free: limited Flows/Completions per month,Pro,$20/month,"Cascade agentic flows, multi-file edits, terminal integration, code search, Codeium completions",https://devin.ai/pricing,N/A
+Replit,N/A,N/A,N/A,N/A,https://replit.com/pricing,"Page.screenshot: Timeout 30000ms exceeded.
+Call log:
+taking page screenshot
+  - waiting for fonts to load..."
+Tabnine,"Basic (Free): limited AI suggestions, community models",Pro / Enterprise,$12/month,"Code completion, chat, privacy-first on-device model option, team learning, IDE plugins",https://www.tabnine.com/pricing/,N/A

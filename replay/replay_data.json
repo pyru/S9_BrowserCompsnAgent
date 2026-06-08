@@ -1,0 +1,689 @@
+{
+  "goal": "Compare 5 AI coding tools \u2014 GitHub Copilot, Cursor, Windsurf, Replit, Tabnine \u2014 by free-plan details, paid-plan details, and starting price, using live browser automation on each tool's official pricing page.",
+  "planner_dag": {
+    "goal": "Compare 5 AI coding tools \u2014 GitHub Copilot, Cursor, Windsurf, Replit, Tabnine \u2014 by free-plan details, paid-plan details, and starting price, using live browser automation on each tool's official pricing page.",
+    "nodes": [
+      {
+        "id": "user_goal",
+        "label": "User Goal",
+        "type": "input",
+        "order": 0
+      },
+      {
+        "id": "planner",
+        "label": "Planner",
+        "type": "skill",
+        "order": 1
+      },
+      {
+        "id": "researcher",
+        "label": "Researcher: Find Candidate URLs",
+        "type": "skill",
+        "order": 2
+      },
+      {
+        "id": "browser",
+        "label": "Browser Skill: Interact with website",
+        "type": "skill",
+        "order": 3
+      },
+      {
+        "id": "path_select",
+        "label": "Cheapest correct path?",
+        "type": "decision",
+        "order": 4
+      },
+      {
+        "id": "path_extract",
+        "label": "Extract Static page",
+        "type": "path",
+        "order": 5
+      },
+      {
+        "id": "path_css",
+        "label": "Deterministic CSS selectors",
+        "type": "path",
+        "order": 5
+      },
+      {
+        "id": "path_a11y",
+        "label": "A11y Accessibility tree",
+        "type": "path",
+        "order": 5
+      },
+      {
+        "id": "path_vision",
+        "label": "Vision Set-of-marks",
+        "type": "path",
+        "order": 5
+      },
+      {
+        "id": "path_blocked",
+        "label": "Gateway Blocked: Recover or report",
+        "type": "path",
+        "order": 5
+      },
+      {
+        "id": "distiller",
+        "label": "Distiller: Normalize Data",
+        "type": "skill",
+        "order": 6
+      },
+      {
+        "id": "qa",
+        "label": "QA / Critic: Validate Sources",
+        "type": "skill",
+        "order": 7
+      },
+      {
+        "id": "replay",
+        "label": "Replay Viewer: HTML Report",
+        "type": "output",
+        "order": 8
+      },
+      {
+        "id": "outputs",
+        "label": "Final Comparison Table",
+        "type": "output",
+        "order": 8
+      }
+    ],
+    "edges": [
+      {
+        "from": "user_goal",
+        "to": "planner"
+      },
+      {
+        "from": "planner",
+        "to": "researcher"
+      },
+      {
+        "from": "researcher",
+        "to": "browser"
+      },
+      {
+        "from": "browser",
+        "to": "path_select"
+      },
+      {
+        "from": "path_select",
+        "to": "path_extract"
+      },
+      {
+        "from": "path_select",
+        "to": "path_css"
+      },
+      {
+        "from": "path_select",
+        "to": "path_a11y"
+      },
+      {
+        "from": "path_select",
+        "to": "path_vision"
+      },
+      {
+        "from": "path_select",
+        "to": "path_blocked"
+      },
+      {
+        "from": "path_extract",
+        "to": "distiller"
+      },
+      {
+        "from": "path_css",
+        "to": "distiller"
+      },
+      {
+        "from": "path_a11y",
+        "to": "distiller"
+      },
+      {
+        "from": "path_vision",
+        "to": "distiller"
+      },
+      {
+        "from": "path_blocked",
+        "to": "distiller"
+      },
+      {
+        "from": "distiller",
+        "to": "qa"
+      },
+      {
+        "from": "qa",
+        "to": "replay"
+      },
+      {
+        "from": "qa",
+        "to": "outputs"
+      }
+    ]
+  },
+  "candidate_urls": [
+    {
+      "name": "GitHub Copilot",
+      "pricing_url": "https://github.com/features/copilot/plans",
+      "homepage": "https://github.com/features/copilot",
+      "official": true,
+      "notes": "GitHub's AI coding assistant \u2014 Individual/Business/Enterprise tiers"
+    },
+    {
+      "name": "Cursor",
+      "pricing_url": "https://www.cursor.com/pricing",
+      "homepage": "https://www.cursor.com",
+      "official": true,
+      "notes": "AI-first code editor with GPT-4 / Claude integration"
+    },
+    {
+      "name": "Windsurf",
+      "pricing_url": "https://codeium.com/pricing",
+      "homepage": "https://codeium.com",
+      "official": true,
+      "notes": "Windsurf (by Codeium); agentic AI IDE \u2014 pricing at codeium.com/pricing"
+    },
+    {
+      "name": "Replit",
+      "pricing_url": "https://replit.com/pricing",
+      "homepage": "https://replit.com",
+      "official": true,
+      "notes": "Cloud-based IDE with AI coding features (Ghostwriter)"
+    },
+    {
+      "name": "Tabnine",
+      "pricing_url": "https://www.tabnine.com/pricing",
+      "homepage": "https://www.tabnine.com",
+      "official": true,
+      "notes": "AI code completion with privacy-first, on-device models"
+    }
+  ],
+  "browser_path_chosen": {
+    "GitHub Copilot": "text+heuristic",
+    "Cursor": "text+heuristic",
+    "Windsurf": "text+heuristic",
+    "Replit": "Extract Static page",
+    "Tabnine": "text+heuristic"
+  },
+  "actions": [
+    {
+      "step": 1,
+      "action": "goto",
+      "target": "GitHub Copilot pricing page",
+      "page": "https://github.com/features/copilot/plans",
+      "result": "success",
+      "timestamp": "2026-06-08T02:06:36.267039+00:00"
+    },
+    {
+      "step": 2,
+      "action": "screenshot",
+      "target": "GitHub Copilot \u2014 initial state",
+      "page": "https://github.com/features/copilot/plans",
+      "result": "success",
+      "timestamp": "2026-06-08T02:06:36.572189+00:00"
+    },
+    {
+      "step": 3,
+      "action": "scroll",
+      "target": "Scroll to plan cards",
+      "page": "https://github.com/features/copilot/plans",
+      "result": "success",
+      "timestamp": "2026-06-08T02:06:37.394275+00:00"
+    },
+    {
+      "step": 4,
+      "action": "click",
+      "target": "Tab: Individual",
+      "page": "https://github.com/features/copilot/plans",
+      "result": "success",
+      "timestamp": "2026-06-08T02:06:38.914538+00:00"
+    },
+    {
+      "step": 5,
+      "action": "scroll",
+      "target": "Scroll to reveal all plan tiers",
+      "page": "https://github.com/features/copilot/plans",
+      "result": "success",
+      "timestamp": "2026-06-08T02:06:39.438394+00:00"
+    },
+    {
+      "step": 6,
+      "action": "screenshot",
+      "target": "Plan cards visible",
+      "page": "https://github.com/features/copilot/plans",
+      "result": "success",
+      "timestamp": "2026-06-08T02:06:39.661164+00:00"
+    },
+    {
+      "step": 7,
+      "action": "extract",
+      "target": "page body text",
+      "page": "https://github.com/features/copilot/plans",
+      "result": "success (10307 chars)",
+      "timestamp": "2026-06-08T02:06:39.670626+00:00"
+    },
+    {
+      "step": 8,
+      "action": "screenshot",
+      "target": "GitHub Copilot \u2014 final state",
+      "page": "https://github.com/features/copilot/plans",
+      "result": "success",
+      "timestamp": "2026-06-08T02:06:39.826265+00:00"
+    },
+    {
+      "step": 9,
+      "action": "goto",
+      "target": "Cursor pricing page",
+      "page": "https://cursor.com/pricing",
+      "result": "success",
+      "timestamp": "2026-06-08T02:06:43.839033+00:00"
+    },
+    {
+      "step": 10,
+      "action": "screenshot",
+      "target": "Cursor \u2014 initial state",
+      "page": "https://cursor.com/pricing",
+      "result": "success",
+      "timestamp": "2026-06-08T02:06:44.015287+00:00"
+    },
+    {
+      "step": 11,
+      "action": "scroll",
+      "target": "Scroll pricing tiers into view",
+      "page": "https://cursor.com/pricing",
+      "result": "success",
+      "timestamp": "2026-06-08T02:06:52.856189+00:00"
+    },
+    {
+      "step": 12,
+      "action": "screenshot",
+      "target": "Cursor pricing grid",
+      "page": "https://cursor.com/pricing",
+      "result": "success",
+      "timestamp": "2026-06-08T02:06:53.066345+00:00"
+    },
+    {
+      "step": 13,
+      "action": "extract",
+      "target": "page body text",
+      "page": "https://cursor.com/pricing",
+      "result": "success (1923 chars)",
+      "timestamp": "2026-06-08T02:06:53.071561+00:00"
+    },
+    {
+      "step": 14,
+      "action": "screenshot",
+      "target": "Cursor \u2014 final state",
+      "page": "https://cursor.com/pricing",
+      "result": "success",
+      "timestamp": "2026-06-08T02:06:53.197852+00:00"
+    },
+    {
+      "step": 15,
+      "action": "goto",
+      "target": "Windsurf pricing page",
+      "page": "https://devin.ai/pricing",
+      "result": "success",
+      "timestamp": "2026-06-08T02:06:57.444492+00:00"
+    },
+    {
+      "step": 16,
+      "action": "screenshot",
+      "target": "Windsurf \u2014 initial state",
+      "page": "https://devin.ai/pricing",
+      "result": "success",
+      "timestamp": "2026-06-08T02:06:57.630358+00:00"
+    },
+    {
+      "step": 17,
+      "action": "scroll",
+      "target": "Scroll to Windsurf plan section",
+      "page": "https://devin.ai/pricing",
+      "result": "success",
+      "timestamp": "2026-06-08T02:06:59.880613+00:00"
+    },
+    {
+      "step": 18,
+      "action": "screenshot",
+      "target": "Windsurf plan cards",
+      "page": "https://devin.ai/pricing",
+      "result": "success",
+      "timestamp": "2026-06-08T02:07:00.068043+00:00"
+    },
+    {
+      "step": 19,
+      "action": "extract",
+      "target": "page body text",
+      "page": "https://devin.ai/pricing",
+      "result": "success (3583 chars)",
+      "timestamp": "2026-06-08T02:07:00.072602+00:00"
+    },
+    {
+      "step": 20,
+      "action": "screenshot",
+      "target": "Windsurf \u2014 final state",
+      "page": "https://devin.ai/pricing",
+      "result": "success",
+      "timestamp": "2026-06-08T02:07:00.183360+00:00"
+    },
+    {
+      "step": 21,
+      "action": "goto",
+      "target": "Replit pricing page",
+      "page": "https://replit.com/pricing",
+      "result": "success",
+      "timestamp": "2026-06-08T02:07:04.903787+00:00"
+    },
+    {
+      "step": 22,
+      "action": "screenshot",
+      "target": "Replit \u2014 initial state",
+      "page": "https://replit.com/pricing",
+      "result": "success",
+      "timestamp": "2026-06-08T02:07:05.290113+00:00"
+    },
+    {
+      "step": 23,
+      "action": "scroll",
+      "target": "Scroll to Replit plan cards",
+      "page": "https://replit.com/pricing",
+      "result": "success",
+      "timestamp": "2026-06-08T02:07:08.132874+00:00"
+    },
+    {
+      "step": 24,
+      "action": "error",
+      "target": "Replit session",
+      "page": "https://replit.com/pricing",
+      "result": "failure: Page.screenshot: Timeout 30000ms exceeded.\nCall log:\ntaking page screenshot\n  - waiting for fonts to load...\n",
+      "timestamp": "2026-06-08T02:08:08.210604+00:00"
+    },
+    {
+      "step": 25,
+      "action": "goto",
+      "target": "Tabnine pricing page",
+      "page": "https://www.tabnine.com/pricing/",
+      "result": "success",
+      "timestamp": "2026-06-08T02:08:12.696044+00:00"
+    },
+    {
+      "step": 26,
+      "action": "screenshot",
+      "target": "Tabnine \u2014 initial state",
+      "page": "https://www.tabnine.com/pricing/",
+      "result": "success",
+      "timestamp": "2026-06-08T02:08:12.958973+00:00"
+    },
+    {
+      "step": 27,
+      "action": "scroll",
+      "target": "Scroll to Tabnine plan tiers",
+      "page": "https://www.tabnine.com/pricing/",
+      "result": "success",
+      "timestamp": "2026-06-08T02:08:15.188296+00:00"
+    },
+    {
+      "step": 28,
+      "action": "screenshot",
+      "target": "Tabnine pricing tiers",
+      "page": "https://www.tabnine.com/pricing/",
+      "result": "success",
+      "timestamp": "2026-06-08T02:08:16.392697+00:00"
+    },
+    {
+      "step": 29,
+      "action": "extract",
+      "target": "page body text",
+      "page": "https://www.tabnine.com/pricing/",
+      "result": "success (6652 chars)",
+      "timestamp": "2026-06-08T02:08:16.400975+00:00"
+    },
+    {
+      "step": 30,
+      "action": "screenshot",
+      "target": "Tabnine \u2014 final state",
+      "page": "https://www.tabnine.com/pricing/",
+      "result": "success",
+      "timestamp": "2026-06-08T02:08:16.611598+00:00"
+    }
+  ],
+  "screenshots": [
+    "screenshots/github_copilot_1_initial.png",
+    "screenshots/github_copilot_plans.png",
+    "screenshots/github_copilot_2_final.png",
+    "screenshots/cursor_1_initial.png",
+    "screenshots/cursor_pricing.png",
+    "screenshots/cursor_2_final.png",
+    "screenshots/windsurf_1_initial.png",
+    "screenshots/windsurf_pricing.png",
+    "screenshots/windsurf_2_final.png",
+    "screenshots/replit_1_initial.png",
+    "screenshots/tabnine_1_initial.png",
+    "screenshots/tabnine_pricing.png",
+    "screenshots/tabnine_2_final.png"
+  ],
+  "extracted_data": [
+    {
+      "tool": "GitHub Copilot",
+      "free_plan": "Free (individual): 2,000 code completions/month, 50 chat messages/month",
+      "paid_plan": "Copilot Pro / Business / Enterprise",
+      "starting_price": "$10/month",
+      "key_features": "Multi-model AI (GPT-4o, Claude, Gemini), inline suggestions, GitHub Chat, CLI, PR summaries, code review",
+      "source_url": "https://github.com/features/copilot/plans",
+      "notes": "",
+      "browser_path": "text+heuristic"
+    },
+    {
+      "tool": "Cursor",
+      "free_plan": "Hobby (Free): 2,000 completions, 50 slow premium requests/month",
+      "paid_plan": "Pro",
+      "starting_price": "$20/month",
+      "key_features": "GPT-4 / Claude completions, Composer agent, multi-file edits, codebase indexing, terminal commands",
+      "source_url": "https://cursor.com/pricing",
+      "notes": "",
+      "browser_path": "text+heuristic"
+    },
+    {
+      "tool": "Windsurf",
+      "free_plan": "Free: limited Flows/Completions per month",
+      "paid_plan": "Pro",
+      "starting_price": "$20/month",
+      "key_features": "Cascade agentic flows, multi-file edits, terminal integration, code search, Codeium completions",
+      "source_url": "https://devin.ai/pricing",
+      "notes": "",
+      "browser_path": "text+heuristic"
+    },
+    {
+      "tool": "Replit",
+      "free_plan": "N/A",
+      "paid_plan": "N/A",
+      "starting_price": "N/A",
+      "key_features": "N/A",
+      "source_url": "https://replit.com/pricing",
+      "notes": "Page.screenshot: Timeout 30000ms exceeded.\nCall log:\ntaking page screenshot\n  - waiting for fonts to load...\n",
+      "browser_path": "Extract Static page"
+    },
+    {
+      "tool": "Tabnine",
+      "free_plan": "Basic (Free): limited AI suggestions, community models",
+      "paid_plan": "Pro / Enterprise",
+      "starting_price": "$12/month",
+      "key_features": "Code completion, chat, privacy-first on-device model option, team learning, IDE plugins",
+      "source_url": "https://www.tabnine.com/pricing/",
+      "notes": "",
+      "browser_path": "text+heuristic"
+    }
+  ],
+  "qa_findings": [
+    {
+      "tool": "GitHub Copilot",
+      "check": "official_domain",
+      "status": "pass",
+      "detail": "Source host 'github.com' matches expected ['github.com', 'github.dev']"
+    },
+    {
+      "tool": "GitHub Copilot",
+      "check": "completeness",
+      "status": "pass",
+      "detail": "All required fields populated"
+    },
+    {
+      "tool": "GitHub Copilot",
+      "check": "price_format",
+      "status": "pass",
+      "detail": "starting_price='$10/month' \u2014 parseable"
+    },
+    {
+      "tool": "GitHub Copilot",
+      "check": "url_match",
+      "status": "pass",
+      "detail": "URL matches expected: https://github.com/features/copilot/plans"
+    },
+    {
+      "tool": "Cursor",
+      "check": "official_domain",
+      "status": "pass",
+      "detail": "Source host 'cursor.com' matches expected ['cursor.com', 'cursor.sh']"
+    },
+    {
+      "tool": "Cursor",
+      "check": "completeness",
+      "status": "pass",
+      "detail": "All required fields populated"
+    },
+    {
+      "tool": "Cursor",
+      "check": "price_format",
+      "status": "pass",
+      "detail": "starting_price='$20/month' \u2014 parseable"
+    },
+    {
+      "tool": "Cursor",
+      "check": "url_match",
+      "status": "warn",
+      "detail": "Landed on 'https://cursor.com/pricing' vs expected 'https://www.cursor.com/pricing'"
+    },
+    {
+      "tool": "Windsurf",
+      "check": "official_domain",
+      "status": "warn",
+      "detail": "Source host 'devin.ai' does NOT match expected ['windsurf.com', 'codeium.com', 'windsurf.ai']"
+    },
+    {
+      "tool": "Windsurf",
+      "check": "completeness",
+      "status": "pass",
+      "detail": "All required fields populated"
+    },
+    {
+      "tool": "Windsurf",
+      "check": "price_format",
+      "status": "pass",
+      "detail": "starting_price='$20/month' \u2014 parseable"
+    },
+    {
+      "tool": "Windsurf",
+      "check": "url_match",
+      "status": "warn",
+      "detail": "Landed on 'https://devin.ai/pricing' vs expected 'https://codeium.com/pricing'"
+    },
+    {
+      "tool": "Replit",
+      "check": "official_domain",
+      "status": "pass",
+      "detail": "Source host 'replit.com' matches expected ['replit.com']"
+    },
+    {
+      "tool": "Replit",
+      "check": "completeness",
+      "status": "warn",
+      "detail": "Missing/N/A fields: ['free_plan', 'paid_plan', 'starting_price', 'key_features']"
+    },
+    {
+      "tool": "Replit",
+      "check": "price_format",
+      "status": "warn",
+      "detail": "starting_price='N/A' \u2014 not a recognised $X/month pattern"
+    },
+    {
+      "tool": "Replit",
+      "check": "url_match",
+      "status": "pass",
+      "detail": "URL matches expected: https://replit.com/pricing"
+    },
+    {
+      "tool": "Tabnine",
+      "check": "official_domain",
+      "status": "pass",
+      "detail": "Source host 'tabnine.com' matches expected ['tabnine.com']"
+    },
+    {
+      "tool": "Tabnine",
+      "check": "completeness",
+      "status": "pass",
+      "detail": "All required fields populated"
+    },
+    {
+      "tool": "Tabnine",
+      "check": "price_format",
+      "status": "pass",
+      "detail": "starting_price='$12/month' \u2014 parseable"
+    },
+    {
+      "tool": "Tabnine",
+      "check": "url_match",
+      "status": "pass",
+      "detail": "URL matches expected: https://www.tabnine.com/pricing"
+    }
+  ],
+  "final_comparison_table": [
+    {
+      "tool": "GitHub Copilot",
+      "free_plan": "Free (individual): 2,000 code completions/month, 50 chat messages/month",
+      "paid_plan": "Copilot Pro / Business / Enterprise",
+      "starting_price": "$10/month",
+      "key_features": "Multi-model AI (GPT-4o, Claude, Gemini), inline suggestions, GitHub Chat, CLI, PR summaries, code review",
+      "source_url": "https://github.com/features/copilot/plans",
+      "notes": "N/A"
+    },
+    {
+      "tool": "Cursor",
+      "free_plan": "Hobby (Free): 2,000 completions, 50 slow premium requests/month",
+      "paid_plan": "Pro",
+      "starting_price": "$20/month",
+      "key_features": "GPT-4 / Claude completions, Composer agent, multi-file edits, codebase indexing, terminal commands",
+      "source_url": "https://cursor.com/pricing",
+      "notes": "N/A"
+    },
+    {
+      "tool": "Windsurf",
+      "free_plan": "Free: limited Flows/Completions per month",
+      "paid_plan": "Pro",
+      "starting_price": "$20/month",
+      "key_features": "Cascade agentic flows, multi-file edits, terminal integration, code search, Codeium completions",
+      "source_url": "https://devin.ai/pricing",
+      "notes": "N/A"
+    },
+    {
+      "tool": "Replit",
+      "free_plan": "N/A",
+      "paid_plan": "N/A",
+      "starting_price": "N/A",
+      "key_features": "N/A",
+      "source_url": "https://replit.com/pricing",
+      "notes": "Page.screenshot: Timeout 30000ms exceeded.\nCall log:\ntaking page screenshot\n  - waiting for fonts to load..."
+    },
+    {
+      "tool": "Tabnine",
+      "free_plan": "Basic (Free): limited AI suggestions, community models",
+      "paid_plan": "Pro / Enterprise",
+      "starting_price": "$12/month",
+      "key_features": "Code completion, chat, privacy-first on-device model option, team learning, IDE plugins",
+      "source_url": "https://www.tabnine.com/pricing/",
+      "notes": "N/A"
+    }
+  ],
+  "turn_count": 30,
+  "estimated_cost": "N/A",
+  "run_start": "2026-06-08T02:06:29.717354+00:00",
+  "run_end": "2026-06-08T02:08:16.988867+00:00",
+  "duration_seconds": 107.3
+}

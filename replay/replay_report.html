@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Browser Comparison Agent — Replay Report</title>
+<style>
+  :root {
+    --bg: #0f1117; --surface: #1c1f2e; --card: #252836;
+    --accent: #6c63ff; --accent2: #00d4aa; --text: #e2e8f0;
+    --muted: #8892a4; --border: #2d3148; --pass: #22c55e;
+    --warn: #f59e0b; --fail: #ef4444;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; font-size: 14px; line-height: 1.6; }
+  a { color: var(--accent2); text-decoration: none; } a:hover { text-decoration: underline; }
+  h1 { font-size: 1.8rem; font-weight: 700; background: linear-gradient(90deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  h2 { font-size: 1.15rem; font-weight: 600; color: var(--accent2); margin-bottom: 12px; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
+  h3 { font-size: 1rem; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+  .header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 24px 40px; }
+  .goal { background: var(--card); border-left: 4px solid var(--accent); padding: 12px 16px; border-radius: 4px; margin-top: 12px; font-size: 0.9rem; color: var(--muted); }
+  .container { max-width: 1300px; margin: 0 auto; padding: 32px 40px; }
+  .section { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 24px; margin-bottom: 28px; }
+  /* DAG */
+  .dag { display: flex; align-items: center; flex-wrap: wrap; gap: 0; }
+  .dag-node { background: var(--card); border: 1.5px solid var(--border); border-radius: 8px; padding: 10px 16px; font-size: 0.8rem; text-align: center; min-width: 140px; position: relative; }
+  .dag-node.input { border-color: var(--accent); }
+  .dag-node.output { border-color: var(--accent2); }
+  .dag-node.skill { border-color: #8b5cf6; }
+  .dag-arrow { color: var(--muted); font-size: 1.2rem; padding: 0 6px; }
+  /* Actions table */
+  table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+  th { background: var(--card); color: var(--accent2); font-weight: 600; padding: 10px 12px; text-align: left; border-bottom: 2px solid var(--border); }
+  td { padding: 8px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:hover td { background: var(--card); }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 0.72rem; font-weight: 600; }
+  .badge.success { background: #166534; color: #86efac; }
+  .badge.failure { background: #7f1d1d; color: #fca5a5; }
+  .badge.pending { background: #374151; color: #9ca3af; }
+  /* QA badges */
+  .qa-pass { color: var(--pass); } .qa-warn { color: var(--warn); } .qa-fail { color: var(--fail); }
+  /* Screenshots */
+  .screenshots-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+  .screenshot-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .screenshot-card img { width: 100%; display: block; border-bottom: 1px solid var(--border); }
+  .screenshot-card .caption { padding: 8px 12px; font-size: 0.78rem; color: var(--muted); }
+  /* Comparison table */
+  .comparison-table { overflow-x: auto; }
+  .comparison-table th { white-space: nowrap; }
+  .comparison-table td { max-width: 260px; }
+  .price-tag { display: inline-block; background: linear-gradient(135deg,#6c63ff22,#00d4aa22); border: 1px solid var(--accent); color: var(--accent2); padding: 3px 10px; border-radius: 999px; font-weight: 700; font-size: 0.85rem; }
+  /* Summary bar */
+  .summary-bar { display: flex; gap: 24px; flex-wrap: wrap; }
+  .stat { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 12px 20px; text-align: center; }
+  .stat .val { font-size: 1.6rem; font-weight: 700; color: var(--accent); }
+  .stat .lbl { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+  /* URL list */
+  .url-list { list-style: none; } .url-list li { padding: 6px 0; border-bottom: 1px solid var(--border); font-size: 0.85rem; }
+  .tool-name { font-weight: 600; color: var(--text); min-width: 160px; display: inline-block; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Browser Comparison Agent — Replay Report</h1>
+  <div class="goal">Compare 5 AI coding tools — GitHub Copilot, Cursor, Windsurf, Replit, Tabnine — by free-plan details, paid-plan details, and starting price, using live browser automation on each tool's official pricing page.</div>
+</div>
+
+<div class="container">
+
+  <!-- Run Summary -->
+  <div class="section">
+    <h2>Run Summary</h2>
+    <div class="summary-bar">
+      <div class="stat"><div class="val">30</div><div class="lbl">Browser Actions</div></div>
+      <div class="stat"><div class="val">13</div><div class="lbl">Screenshots</div></div>
+      <div class="stat"><div class="val">5</div><div class="lbl">Tools Compared</div></div>
+      <div class="stat"><div class="val">107.3s</div><div class="lbl">Duration</div></div>
+      <div class="stat"><div class="val">N/A</div><div class="lbl">Estimated Cost</div></div>
+      <div class="stat"><div class="val" style="font-size:0.9rem;color:var(--accent2);">See below</div><div class="lbl">Browser Path</div></div>
+    </div>
+    <p style="margin-top:14px;font-size:0.8rem;color:var(--muted);">
+      Started: 2026-06-08T02:06:29.717354+00:00 &nbsp;|&nbsp; Ended: 2026-06-08T02:08:16.988867+00:00
+    </p>
+  </div>
+
+  <!-- Planner DAG -->
+  <div class="section">
+    <h2>Planner DAG</h2>
+    <div class="dag"><div class="dag-node input"><strong>User Goal</strong></div><div class="dag-arrow">→</div><div class="dag-node skill"><strong>Planner</strong></div><div class="dag-arrow">→</div><div class="dag-node skill"><strong>Researcher: Find Candidate URLs</strong></div><div class="dag-arrow">→</div><div class="dag-node skill"><strong>Browser Skill: Interact with website</strong></div><div class="dag-arrow">→</div><div class="dag-node decision"><strong>Cheapest correct path?</strong></div><div class="dag-arrow">⇒ ⇒</div><div class="dag-node path"><strong>Extract Static page</strong></div><div class="dag-arrow">→</div><div class="dag-node path"><strong>Deterministic CSS selectors</strong></div><div class="dag-arrow">→</div><div class="dag-node path"><strong>A11y Accessibility tree</strong></div><div class="dag-arrow">→</div><div class="dag-node path"><strong>Vision Set-of-marks</strong></div><div class="dag-arrow">→</div><div class="dag-node path"><strong>Gateway Blocked: Recover or report</strong></div><div class="dag-arrow">→</div><div class="dag-node skill"><strong>Distiller: Normalize Data</strong></div><div class="dag-arrow">→</div><div class="dag-node skill"><strong>QA / Critic: Validate Sources</strong></div><div class="dag-arrow">⇒ ⇒</div><div class="dag-node output"><strong>Replay Viewer: HTML Report</strong></div><div class="dag-arrow">→</div><div class="dag-node output"><strong>Final Comparison Table</strong></div></div>
+  </div>
+
+  <!-- Candidate URLs -->
+  <div class="section">
+    <h2>Candidate URLs (Researcher Output)</h2>
+    <ul class="url-list"><li><span class="tool-name">GitHub Copilot</span><a href="https://github.com/features/copilot/plans" target="_blank">https://github.com/features/copilot/plans</a> &nbsp;<span style="color:var(--muted);font-size:0.8rem;">— GitHub's AI coding assistant — Individual/Business/Enterprise tiers</span></li><li><span class="tool-name">Cursor</span><a href="https://www.cursor.com/pricing" target="_blank">https://www.cursor.com/pricing</a> &nbsp;<span style="color:var(--muted);font-size:0.8rem;">— AI-first code editor with GPT-4 / Claude integration</span></li><li><span class="tool-name">Windsurf</span><a href="https://codeium.com/pricing" target="_blank">https://codeium.com/pricing</a> &nbsp;<span style="color:var(--muted);font-size:0.8rem;">— Windsurf (by Codeium); agentic AI IDE — pricing at codeium.com/pricing</span></li><li><span class="tool-name">Replit</span><a href="https://replit.com/pricing" target="_blank">https://replit.com/pricing</a> &nbsp;<span style="color:var(--muted);font-size:0.8rem;">— Cloud-based IDE with AI coding features (Ghostwriter)</span></li><li><span class="tool-name">Tabnine</span><a href="https://www.tabnine.com/pricing" target="_blank">https://www.tabnine.com/pricing</a> &nbsp;<span style="color:var(--muted);font-size:0.8rem;">— AI code completion with privacy-first, on-device models</span></li></ul>
+  </div>
+
+  <!-- Browser Path Chosen -->
+  <div class="section">
+    <h2>Browser Path Chosen</h2>
+    <table>
+      <thead><tr><th>Path</th><th>Strategy</th><th>This Run</th></tr></thead>
+      <tbody><tr>
+          <td><strong>Extract Static page</strong></td>
+          <td style="font-size:0.8rem;color:var(--muted)">Rendered DOM text extraction (innerText + regex). Cheapest path — works when JS renders text into the page body.</td>
+          <td><span style="color:var(--pass);font-weight:700;">&#10003; USED</span> — Replit</td>
+        </tr><tr>
+          <td><strong>Deterministic CSS selectors</strong></td>
+          <td style="font-size:0.8rem;color:var(--muted)">Target specific CSS selectors for plan cards or price elements. Used when page structure is stable and known.</td>
+          <td><span style="color:var(--muted);">not used this run</span></td>
+        </tr><tr>
+          <td><strong>A11y Accessibility tree</strong></td>
+          <td style="font-size:0.8rem;color:var(--muted)">Traverse the browser accessibility tree to find labelled price/plan nodes. Framework-agnostic.</td>
+          <td><span style="color:var(--muted);">not used this run</span></td>
+        </tr><tr>
+          <td><strong>Vision Set-of-marks</strong></td>
+          <td style="font-size:0.8rem;color:var(--muted)">Screenshot the page, pass to a vision LLM with bounding-box marks. Most expensive; handles any layout.</td>
+          <td><span style="color:var(--muted);">not used this run</span></td>
+        </tr><tr>
+          <td><strong>Gateway Blocked</strong></td>
+          <td style="font-size:0.8rem;color:var(--muted)">Site blocked automation or navigation failed. Agent records N/A and reports the block.</td>
+          <td><span style="color:var(--muted);">not used this run</span></td>
+        </tr></tbody>
+    </table>
+  </div>
+
+  <!-- Browser Actions -->
+  <div class="section">
+    <h2>Browser Action Log (30 actions)</h2>
+    <table>
+      <thead><tr><th>#</th><th>Action</th><th>Target</th><th>Page URL</th><th>Result</th><th>Timestamp (UTC)</th></tr></thead>
+      <tbody><tr>
+          <td>1</td>
+          <td><code>goto</code></td>
+          <td>GitHub Copilot pricing page</td>
+          <td style="max-width:220px;word-break:break-all;font-size:0.75rem;">https://github.com/features/copilot/plans</td>
+          <td><span class="badge success">success</span></td>
+          <td style="font-size:0.72rem;color:var(--muted)">2026-06-08T02:06:36.267039+00:00</td>
+        </tr><tr>
+          <td>2</td>
+          <td><code>screenshot</code></td>
+          <td>GitHub Copilot — initial state</td>
+          <td style="max-width:220px;word-break:break-all;font-size:0.75rem;">https://github.com/features/copilot/plans</td>
+          <td><span class="badge success">success</span></td>
+          <td style="font-size:0.72rem;color:var(--muted)">2026-06-08T02:06:36.572189+00:00</td>
+        </tr><tr>
+          <td>3</td>
+          <td><code>scroll</code></td>
+          <td>Scroll to plan cards</td>
+          <td style="max-width:220px;word-break:break-all;font-size:0.75rem;">https://github.com/features/copilot/plans</td>
+          <td><span class="badge success">success</span></td>
+          <td style="font-size:0.72rem;color:var(--muted)">2026-06-08T02:06:37.394275+00:00</td>
+        </tr><tr>
+          <td>4</td>
+          <td><code>click</code></td>
+          <td>Tab: Individual</td>
+          <td style="max-width:220px;word-break:break-all;font-size:0.75rem;">https://github.com/features/copilot/plans</td>
+          <td><span class="badge success">success</span></td>
+          <td style="font-size:0.72rem;color:var(--muted)">2026-06-08T02:06:38.914538+00:00</td>
+        </tr><tr>
+          <td>5</td>
+          <td><code>scroll</code></td>
+          <td>Scroll to reveal all plan tiers</td>
+          <td style="max-width:220px;word-break:break-all;font-size:0.75rem;">https://github.com/features/copilot/plans</td>
+          <td><span class="badge success">success</span></td>
+          <td style="font-size:0.72rem;color:var(--muted)">2026-06-08T02:06:39.438394+00:00</td>
+        </tr><tr>
+          <td>6</td>
+          <td><code>screenshot</code></td>
+          <td>Plan cards visible</td>
+          <td style="max-width:220px;word-break:break-all;font-size:0.75rem;">https://github.com/features/copilot/plans</td>
+          <td><span class="badge success">success</span></td>
+          <td style="font-size:0.72rem;color:var(--muted)">2026-06-08T02:06:39.661164+00:00</td>
+        </tr><tr>
+          <td>7</td>
+          <td><code>extract</code></td>
+          <td>page body text</td>
+          <td style="max-width:220px;word-break:break-all;font-size:0.75rem;">https://github.com/features/copilot/plans</td>
+          <td><span class="badge success">success</span></td>
+          <td style="font-size:0.72rem;color:var(--muted)">2026-06-08T02:06:39.670626+00:00</td>
+        </tr><tr>
+          <td>8</td>
+          <td><code>screenshot</code></td>
+          <td>GitHub Copilot — final state</td>
+          <td style="max-width:220px;word-break:break-all;font-size:0.75rem;">https://github.com/features/copilot/plans</td>
+          <td><span class="badge success">success</span></td>
+          <td style="font-size:0.72rem;color:var(--muted)">2026-06-08T02:06:39.826265+00:00</td>
+        </tr><tr>
+          <td>9</td>
+          <td><code>goto</code></td>
+          <td>Cursor pricing page</td>
+          <td style="max-width:220px;word-break:break-all;font-size:0.75rem;">https://cursor.com/pricing</td>
+          <td><span class="badge success">success</span></td>
+          <td style="font-size:0.72rem;color:var(--muted)">2026-06-08T02:06:43.839033+00:00</td>
+        </tr><tr>
+          <td>10</td>
+          <td><code>screenshot</code></td>
+          <td>Cursor — initial state</td>
+          <td style="max-width:220px;word-break:break-all;font-size:0.75rem;">https://cursor.com/pricing</td>
+          <td><span class="badge success">success</span></td>
+          <td style="font-size:0.72rem;color:var(--muted)">2026-06-08T02:06:44.015287+00:00</td>
+        </tr><tr>
+          <td>11</td>
+          <td><code>scroll</code></td>
+          <td>Scroll pricing tiers into view</td>
+          <td style="max-width:220px;word-break:break-all;font-size:0.75rem;">https://cursor.com/pricing</td>
+          <td><span class="badge success">success</span></td>
+          <td style="font-size:0.72rem;color:var(--muted)">2026-06-08T02:06:52.856189+00:00</td>
+        </tr><tr>
+          <td>12</td>
+          <td><code>screenshot</code></td>
+          <td>Cursor pricing grid</td>
+          <td style="max-width:220px;word-break:break-all;font-size:0.75rem;">https://cursor.com/pricing</td>
+          <td><span class="badge success">success</span></td>
+          <td style="font-size:0.72rem;color:var(--muted)">2026-06-08T02:06:53.066345+00:00</td>
+        </tr><tr>
+          <td>13</td>
+          <td><code>extract</code></td>
+          <td>page body text</td>
+          <td style="max-width:220px;word-break:break-all;font-size:0.75rem;">https://cursor.com/pricing</td>
+          <td><span class="badge success">success</span></td>
+          <td style="font-size:0.72rem;color:var(--muted)">2026-06-08T02:06:53.071561+00:00</td>
+        </tr><tr>
+          <td>14</td>
+          <td><code>screenshot</code></td>
+          <td>Cursor — final state</td>
+          <td style="max-width:220px;word-break:break-all;font-size:0.75rem;">https://cursor.com/pricing</td>
+          <td><span class="badge success">success</span></td>
+          <td style="font-size:0.72rem;color:var(--muted)">2026-06-08T02:06:53.197852+00:00</td>
+        </tr><tr>
+          <td>15</td>
+          <td><code>goto</code></td>
+          <td>Windsurf pricing page</td>
+          <td style="max-width:220px;word-break:break-all;font-size:0.75rem;">https://devin.ai/pricing</td>
+          <td><span class="badge success">success</span></td>
+          <td style="font-size:0.72rem;color:var(--muted)">2026-06-08T02:06:57.444492+00:00</td>
+        </tr><tr>
+          <td>16</td>
+          <td><code>screenshot</code></td>
+          <td>Windsurf — initial state</td>
+          <td style="max-width:220px;word-break:break-all;font-size:0.75rem;">https://devin.ai/pricing</td>
+          <td><span class="badge success">success</span></td>
+          <td style="font-size:0.72rem;color:var(--muted)">2026-06-08T02:06:57.630358+00:00</td>
+        </tr><tr>
+          <td>17</td>
+          <td><code>scroll</code></td>
+          <td>Scroll to Windsurf plan section</td>
+          <td style="max-width:220px;word-break:break-all;font-size:0.75rem;">https://devin.ai/pricing</td>
+          <td><span class="badge success">success</span></td>
+          <td style="font-size:0.72rem;color:var(--muted)">2026-06-08T02:06:59.880613+00:00</td>
+        </tr><tr>
+          <td>18</td>
+          <td><code>screenshot</code></td>
+          <td>Windsurf plan cards</td>
+          <td style="max-width:220px;word-break:break-all;font-size:0.75rem;">https://devin.ai/pricing</td>
+          <td><span class="badge success">success</span></td>
+          <td style="font-size:0.72rem;color:var(--muted)">2026-06-08T02:07:00.068043+00:00</td>
+        </tr><tr>
+          <td>19</td>
+          <td><code>extract</code></td>
+          <td>page body text</td>
+          <td style="max-width:220px;word-break:break-all;font-size:0.75rem;">https://devin.ai/pricing</td>
+          <td><span class="badge success">success</span></td>
+          <td style="font-size:0.72rem;color:var(--muted)">2026-06-08T02:07:00.072602+00:00</td>
+        </tr><tr>
+          <td>20</td>
+          <td><code>screenshot</code></td>
+          <td>Windsurf — final state</td>
+          <td style="max-width:220px;word-break:break-all;font-size:0.75rem;">https://devin.ai/pricing</td>
+          <td><span class="badge success">success</span></td>
+          <td style="font-size:0.72rem;color:var(--muted)">2026-06-08T02:07:00.183360+00:00</td>
+        </tr><tr>
+          <td>21</td>
+          <td><code>goto</code></td>
+          <td>Replit pricing page</td>
+          <td style="max-width:220px;word-break:break-all;font-size:0.75rem;">https://replit.com/pricing</td>
+          <td><span class="badge success">success</span></td>
+          <td style="font-size:0.72rem;color:var(--muted)">2026-06-08T02:07:04.903787+00:00</td>
+        </tr><tr>
+          <td>22</td>
+          <td><code>screenshot</code></td>
+          <td>Replit — initial state</td>
+          <td style="max-width:220px;word-break:break-all;font-size:0.75rem;">https://replit.com/pricing</td>
+          <td><span class="badge success">success</span></td>
+          <td style="font-size:0.72rem;color:var(--muted)">2026-06-08T02:07:05.290113+00:00</td>
+        </tr><tr>
+          <td>23</td>
+          <td><code>scroll</code></td>
+          <td>Scroll to Replit plan cards</td>
+          <td style="max-width:220px;word-break:break-all;font-size:0.75rem;">https://replit.com/pricing</td>
+          <td><span class="badge success">success</span></td>
+          <td style="font-size:0.72rem;color:var(--muted)">2026-06-08T02:07:08.132874+00:00</td>
+        </tr><tr>
+          <td>24</td>
+          <td><code>error</code></td>
+          <td>Replit session</td>
+          <td style="max-width:220px;word-break:break-all;font-size:0.75rem;">https://replit.com/pricing</td>
+          <td><span class="badge failure">failure</span></td>
+          <td style="font-size:0.72rem;color:var(--muted)">2026-06-08T02:08:08.210604+00:00</td>
+        </tr><tr>
+          <td>25</td>
+          <td><code>goto</code></td>
+          <td>Tabnine pricing page</td>
+          <td style="max-width:220px;word-break:break-all;font-size:0.75rem;">https://www.tabnine.com/pricing/</td>
+          <td><span class="badge success">success</span></td>
+          <td style="font-size:0.72rem;color:var(--muted)">2026-06-08T02:08:12.696044+00:00</td>
+        </tr><tr>
+          <td>26</td>
+          <td><code>screenshot</code></td>
+          <td>Tabnine — initial state</td>
+          <td style="max-width:220px;word-break:break-all;font-size:0.75rem;">https://www.tabnine.com/pricing/</td>
+          <td><span class="badge success">success</span></td>
+          <td style="font-size:0.72rem;color:var(--muted)">2026-06-08T02:08:12.958973+00:00</td>
+        </tr><tr>
+          <td>27</td>
+          <td><code>scroll</code></td>
+          <td>Scroll to Tabnine plan tiers</td>
+          <td style="max-width:220px;word-break:break-all;font-size:0.75rem;">https://www.tabnine.com/pricing/</td>
+          <td><span class="badge success">success</span></td>
+          <td style="font-size:0.72rem;color:var(--muted)">2026-06-08T02:08:15.188296+00:00</td>
+        </tr><tr>
+          <td>28</td>
+          <td><code>screenshot</code></td>
+          <td>Tabnine pricing tiers</td>
+          <td style="max-width:220px;word-break:break-all;font-size:0.75rem;">https://www.tabnine.com/pricing/</td>
+          <td><span class="badge success">success</span></td>
+          <td style="font-size:0.72rem;color:var(--muted)">2026-06-08T02:08:16.392697+00:00</td>
+        </tr><tr>
+          <td>29</td>
+          <td><code>extract</code></td>
+          <td>page body text</td>
+          <td style="max-width:220px;word-break:break-all;font-size:0.75rem;">https://www.tabnine.com/pricing/</td>
+          <td><span class="badge success">success</span></td>
+          <td style="font-size:0.72rem;color:var(--muted)">2026-06-08T02:08:16.400975+00:00</td>
+        </tr><tr>
+          <td>30</td>
+          <td><code>screenshot</code></td>
+          <td>Tabnine — final state</td>
+          <td style="max-width:220px;word-break:break-all;font-size:0.75rem;">https://www.tabnine.com/pricing/</td>
+          <td><span class="badge success">success</span></td>
+          <td style="font-size:0.72rem;color:var(--muted)">2026-06-08T02:08:16.611598+00:00</td>
+        </tr></tbody>
+    </table>
+  </div>
+
+  <!-- Screenshots -->
+  <div class="section">
+    <h2>Screenshots (13 captured)</h2>
+    <div class="screenshots-grid"><div class="screenshot-card"><img src="screenshots/github_copilot_1_initial.png" alt="github copilot 1 initial" onerror="this.style.display='none'"><div class="caption">github copilot 1 initial</div></div><div class="screenshot-card"><img src="screenshots/github_copilot_plans.png" alt="github copilot plans" onerror="this.style.display='none'"><div class="caption">github copilot plans</div></div><div class="screenshot-card"><img src="screenshots/github_copilot_2_final.png" alt="github copilot 2 final" onerror="this.style.display='none'"><div class="caption">github copilot 2 final</div></div><div class="screenshot-card"><img src="screenshots/cursor_1_initial.png" alt="cursor 1 initial" onerror="this.style.display='none'"><div class="caption">cursor 1 initial</div></div><div class="screenshot-card"><img src="screenshots/cursor_pricing.png" alt="cursor pricing" onerror="this.style.display='none'"><div class="caption">cursor pricing</div></div><div class="screenshot-card"><img src="screenshots/cursor_2_final.png" alt="cursor 2 final" onerror="this.style.display='none'"><div class="caption">cursor 2 final</div></div><div class="screenshot-card"><img src="screenshots/windsurf_1_initial.png" alt="windsurf 1 initial" onerror="this.style.display='none'"><div class="caption">windsurf 1 initial</div></div><div class="screenshot-card"><img src="screenshots/windsurf_pricing.png" alt="windsurf pricing" onerror="this.style.display='none'"><div class="caption">windsurf pricing</div></div><div class="screenshot-card"><img src="screenshots/windsurf_2_final.png" alt="windsurf 2 final" onerror="this.style.display='none'"><div class="caption">windsurf 2 final</div></div><div class="screenshot-card"><img src="screenshots/replit_1_initial.png" alt="replit 1 initial" onerror="this.style.display='none'"><div class="caption">replit 1 initial</div></div><div class="screenshot-card"><img src="screenshots/tabnine_1_initial.png" alt="tabnine 1 initial" onerror="this.style.display='none'"><div class="caption">tabnine 1 initial</div></div><div class="screenshot-card"><img src="screenshots/tabnine_pricing.png" alt="tabnine pricing" onerror="this.style.display='none'"><div class="caption">tabnine pricing</div></div><div class="screenshot-card"><img src="screenshots/tabnine_2_final.png" alt="tabnine 2 final" onerror="this.style.display='none'"><div class="caption">tabnine 2 final</div></div></div>
+  </div>
+
+  <!-- QA Findings -->
+  <div class="section">
+    <h2>QA / Critic Findings</h2>
+    <table>
+      <thead><tr><th>Tool</th><th>Check</th><th>Status</th><th>Detail</th></tr></thead>
+      <tbody><tr>
+          <td>GitHub Copilot</td>
+          <td>official_domain</td>
+          <td class="qa-pass">✓ pass</td>
+          <td style="font-size:0.8rem;color:var(--muted)">Source host 'github.com' matches expected ['github.com', 'github.dev']</td>
+        </tr><tr>
+          <td>GitHub Copilot</td>
+          <td>completeness</td>
+          <td class="qa-pass">✓ pass</td>
+          <td style="font-size:0.8rem;color:var(--muted)">All required fields populated</td>
+        </tr><tr>
+          <td>GitHub Copilot</td>
+          <td>price_format</td>
+          <td class="qa-pass">✓ pass</td>
+          <td style="font-size:0.8rem;color:var(--muted)">starting_price='$10/month' — parseable</td>
+        </tr><tr>
+          <td>GitHub Copilot</td>
+          <td>url_match</td>
+          <td class="qa-pass">✓ pass</td>
+          <td style="font-size:0.8rem;color:var(--muted)">URL matches expected: https://github.com/features/copilot/plans</td>
+        </tr><tr>
+          <td>Cursor</td>
+          <td>official_domain</td>
+          <td class="qa-pass">✓ pass</td>
+          <td style="font-size:0.8rem;color:var(--muted)">Source host 'cursor.com' matches expected ['cursor.com', 'cursor.sh']</td>
+        </tr><tr>
+          <td>Cursor</td>
+          <td>completeness</td>
+          <td class="qa-pass">✓ pass</td>
+          <td style="font-size:0.8rem;color:var(--muted)">All required fields populated</td>
+        </tr><tr>
+          <td>Cursor</td>
+          <td>price_format</td>
+          <td class="qa-pass">✓ pass</td>
+          <td style="font-size:0.8rem;color:var(--muted)">starting_price='$20/month' — parseable</td>
+        </tr><tr>
+          <td>Cursor</td>
+          <td>url_match</td>
+          <td class="qa-warn">⚠ warn</td>
+          <td style="font-size:0.8rem;color:var(--muted)">Landed on 'https://cursor.com/pricing' vs expected 'https://www.cursor.com/pricing'</td>
+        </tr><tr>
+          <td>Windsurf</td>
+          <td>official_domain</td>
+          <td class="qa-warn">⚠ warn</td>
+          <td style="font-size:0.8rem;color:var(--muted)">Source host 'devin.ai' does NOT match expected ['windsurf.com', 'codeium.com', 'windsurf.ai']</td>
+        </tr><tr>
+          <td>Windsurf</td>
+          <td>completeness</td>
+          <td class="qa-pass">✓ pass</td>
+          <td style="font-size:0.8rem;color:var(--muted)">All required fields populated</td>
+        </tr><tr>
+          <td>Windsurf</td>
+          <td>price_format</td>
+          <td class="qa-pass">✓ pass</td>
+          <td style="font-size:0.8rem;color:var(--muted)">starting_price='$20/month' — parseable</td>
+        </tr><tr>
+          <td>Windsurf</td>
+          <td>url_match</td>
+          <td class="qa-warn">⚠ warn</td>
+          <td style="font-size:0.8rem;color:var(--muted)">Landed on 'https://devin.ai/pricing' vs expected 'https://codeium.com/pricing'</td>
+        </tr><tr>
+          <td>Replit</td>
+          <td>official_domain</td>
+          <td class="qa-pass">✓ pass</td>
+          <td style="font-size:0.8rem;color:var(--muted)">Source host 'replit.com' matches expected ['replit.com']</td>
+        </tr><tr>
+          <td>Replit</td>
+          <td>completeness</td>
+          <td class="qa-warn">⚠ warn</td>
+          <td style="font-size:0.8rem;color:var(--muted)">Missing/N/A fields: ['free_plan', 'paid_plan', 'starting_price', 'key_features']</td>
+        </tr><tr>
+          <td>Replit</td>
+          <td>price_format</td>
+          <td class="qa-warn">⚠ warn</td>
+          <td style="font-size:0.8rem;color:var(--muted)">starting_price='N/A' — not a recognised $X/month pattern</td>
+        </tr><tr>
+          <td>Replit</td>
+          <td>url_match</td>
+          <td class="qa-pass">✓ pass</td>
+          <td style="font-size:0.8rem;color:var(--muted)">URL matches expected: https://replit.com/pricing</td>
+        </tr><tr>
+          <td>Tabnine</td>
+          <td>official_domain</td>
+          <td class="qa-pass">✓ pass</td>
+          <td style="font-size:0.8rem;color:var(--muted)">Source host 'tabnine.com' matches expected ['tabnine.com']</td>
+        </tr><tr>
+          <td>Tabnine</td>
+          <td>completeness</td>
+          <td class="qa-pass">✓ pass</td>
+          <td style="font-size:0.8rem;color:var(--muted)">All required fields populated</td>
+        </tr><tr>
+          <td>Tabnine</td>
+          <td>price_format</td>
+          <td class="qa-pass">✓ pass</td>
+          <td style="font-size:0.8rem;color:var(--muted)">starting_price='$12/month' — parseable</td>
+        </tr><tr>
+          <td>Tabnine</td>
+          <td>url_match</td>
+          <td class="qa-pass">✓ pass</td>
+          <td style="font-size:0.8rem;color:var(--muted)">URL matches expected: https://www.tabnine.com/pricing</td>
+        </tr></tbody>
+    </table>
+  </div>
+
+  <!-- Final Comparison Table -->
+  <div class="section">
+    <h2>Final Comparison Table</h2>
+    <div class="comparison-table"><table>
+      <thead><tr><th>Tool</th><th>Free Plan</th><th>Paid Plan</th><th>Starting Price</th><th>Key Features</th><th>Source URL</th><th>Notes</th></tr></thead>
+      <tbody><tr><td><strong>GitHub Copilot</strong></td><td>Free (individual): 2,000 code completions/month, 50 chat messages/month</td><td>Copilot Pro / Business / Enterprise</td><td><span class="price-tag">$10/month</span></td><td>Multi-model AI (GPT-4o, Claude, Gemini), inline suggestions, GitHub Chat, CLI, PR summaries, code review</td><td><a href="https://github.com/features/copilot/plans" target="_blank">https://github.com/features/copilot/plans</a></td><td>N/A</td></tr><tr><td><strong>Cursor</strong></td><td>Hobby (Free): 2,000 completions, 50 slow premium requests/month</td><td>Pro</td><td><span class="price-tag">$20/month</span></td><td>GPT-4 / Claude completions, Composer agent, multi-file edits, codebase indexing, terminal commands</td><td><a href="https://cursor.com/pricing" target="_blank">https://cursor.com/pricing</a></td><td>N/A</td></tr><tr><td><strong>Windsurf</strong></td><td>Free: limited Flows/Completions per month</td><td>Pro</td><td><span class="price-tag">$20/month</span></td><td>Cascade agentic flows, multi-file edits, terminal integration, code search, Codeium completions</td><td><a href="https://devin.ai/pricing" target="_blank">https://devin.ai/pricing</a></td><td>N/A</td></tr><tr><td><strong>Replit</strong></td><td>N/A</td><td>N/A</td><td><span class="price-tag">N/A</span></td><td>N/A</td><td><a href="https://replit.com/pricing" target="_blank">https://replit.com/pricing</a></td><td>Page.screenshot: Timeout 30000ms exceeded.
+Call log:
+taking page screenshot
+  - waiting for fonts to load...</td></tr><tr><td><strong>Tabnine</strong></td><td>Basic (Free): limited AI suggestions, community models</td><td>Pro / Enterprise</td><td><span class="price-tag">$12/month</span></td><td>Code completion, chat, privacy-first on-device model option, team learning, IDE plugins</td><td><a href="https://www.tabnine.com/pricing/" target="_blank">https://www.tabnine.com/pricing/</a></td><td>N/A</td></tr></tbody>
+    </table></div>
+  </div>
+
+</div>
+
+<div style="text-align:center;padding:20px;color:var(--muted);font-size:0.78rem;border-top:1px solid var(--border);">
+  Generated by Browser Comparison Agent &nbsp;|&nbsp;
+  2026-06-08 02:08 UTC
+</div>
+</body>
+</html>
