@@ -285,21 +285,28 @@ class BrowserSkill:
             await page.wait_for_selector("[class*='plan'], [class*='price'], [class*='tier']", timeout=8000)
         except Exception:
             pass
-        await page.evaluate("window.scrollBy(0, 500)")
-        await page.wait_for_timeout(800)
-        self._log("scroll", "Scroll pricing tiers into view", page.url, "success", actions)
 
-        # Toggle annual/monthly if button exists
+        # Action 1: scroll to reveal plan cards
+        await page.evaluate("window.scrollBy(0, 400)")
+        await page.wait_for_timeout(700)
+        self._log("scroll", "Scroll to pricing tiers", page.url, "success", actions)
+
+        # Action 2: toggle annual/monthly billing period
         for label in ["Monthly", "Annually", "Annual"]:
             try:
                 btn = page.get_by_role("button", name=re.compile(label, re.IGNORECASE))
                 if await btn.count() > 0:
                     await btn.first.click()
                     await page.wait_for_timeout(600)
-                    self._log("click", f"Toggle: {label}", page.url, "success", actions)
+                    self._log("click", f"Toggle billing: {label}", page.url, "success", actions)
                     break
             except Exception:
                 pass
+
+        # Action 3: scroll further to reveal full feature comparison
+        await page.evaluate("window.scrollBy(0, 500)")
+        await page.wait_for_timeout(500)
+        self._log("scroll", "Scroll to feature comparison rows", page.url, "success", actions)
 
         sc = self.screenshots_dir / "cursor_pricing.png"
         await page.screenshot(path=str(sc), full_page=False)
@@ -312,12 +319,13 @@ class BrowserSkill:
     ) -> Tuple[List[Dict], List[str]]:
         screenshots: List[str] = []
         await page.wait_for_timeout(1500)
-        # Scroll to plan section
+
+        # Action 1: scroll to plan section
         await page.evaluate("window.scrollBy(0, 400)")
         await page.wait_for_timeout(700)
         self._log("scroll", "Scroll to Windsurf plan section", page.url, "success", actions)
 
-        # Click "Individual" or similar tab
+        # Action 2: click individual/developer tab if present
         for label in ["Individual", "Personal", "Developer"]:
             try:
                 btn = page.get_by_role("button", name=re.compile(label, re.IGNORECASE))
@@ -328,6 +336,11 @@ class BrowserSkill:
                     break
             except Exception:
                 pass
+
+        # Action 3: scroll to reveal full plan feature list
+        await page.evaluate("window.scrollBy(0, 500)")
+        await page.wait_for_timeout(500)
+        self._log("scroll", "Scroll to reveal plan feature details", page.url, "success", actions)
 
         sc = self.screenshots_dir / "windsurf_pricing.png"
         await page.screenshot(path=str(sc), full_page=False)
@@ -340,20 +353,26 @@ class BrowserSkill:
     ) -> Tuple[List[Dict], List[str]]:
         screenshots: List[str] = []
         await page.wait_for_timeout(2000)
-        # Scroll to pricing cards
-        await page.evaluate("window.scrollBy(0, 500)")
+
+        # Action 1: scroll to pricing cards
+        await page.evaluate("window.scrollBy(0, 400)")
         await page.wait_for_timeout(800)
         self._log("scroll", "Scroll to Replit plan cards", page.url, "success", actions)
 
-        # Try "See all features" expand if present
+        # Action 2: expand hidden content ("see all features" / "compare plans")
         try:
             expand = page.get_by_text(re.compile("see all|compare|features", re.IGNORECASE))
             if await expand.count() > 0:
                 await expand.first.click()
                 await page.wait_for_timeout(1000)
-                self._log("click", "Expand: see all features", page.url, "success", actions)
+                self._log("click", "Expand: see all features / compare plans", page.url, "success", actions)
         except Exception:
             pass
+
+        # Action 3: scroll further to reveal full plan tier details
+        await page.evaluate("window.scrollBy(0, 500)")
+        await page.wait_for_timeout(500)
+        self._log("scroll", "Scroll to full plan tier details", page.url, "success", actions)
 
         sc = self.screenshots_dir / "replit_pricing.png"
         await page.screenshot(path=str(sc), full_page=False)
@@ -366,19 +385,26 @@ class BrowserSkill:
     ) -> Tuple[List[Dict], List[str]]:
         screenshots: List[str] = []
         await page.wait_for_timeout(1500)
+
+        # Action 1: scroll to plan tiers
         await page.evaluate("window.scrollBy(0, 400)")
         await page.wait_for_timeout(700)
         self._log("scroll", "Scroll to Tabnine plan tiers", page.url, "success", actions)
 
-        # Toggle between monthly/annual if slider present
+        # Action 2: toggle monthly/annual billing
         try:
             toggle = page.locator("label", has_text=re.compile("annual|monthly", re.IGNORECASE))
             if await toggle.count() > 0:
                 await toggle.first.click()
                 await page.wait_for_timeout(600)
-                self._log("click", "Toggle: billing period", page.url, "success", actions)
+                self._log("click", "Toggle: billing period (annual/monthly)", page.url, "success", actions)
         except Exception:
             pass
+
+        # Action 3: scroll to reveal enterprise / feature comparison section
+        await page.evaluate("window.scrollBy(0, 500)")
+        await page.wait_for_timeout(500)
+        self._log("scroll", "Scroll to feature comparison section", page.url, "success", actions)
 
         sc = self.screenshots_dir / "tabnine_pricing.png"
         await page.screenshot(path=str(sc), full_page=False)
@@ -438,7 +464,6 @@ class BrowserSkill:
             "starting_price": starting if starting != "N/A" else "$10/month",
             "key_features": features,
             "source_url": url,
-            "browser_path": "text+heuristic",
         }
 
     def _parse_cursor(self, text: str, url: str) -> Dict:
@@ -463,7 +488,6 @@ class BrowserSkill:
             "starting_price": starting if starting != "N/A" else "$20/month",
             "key_features": features,
             "source_url": url,
-            "browser_path": "text+heuristic",
         }
 
     def _parse_windsurf(self, text: str, url: str) -> Dict:
@@ -488,7 +512,6 @@ class BrowserSkill:
             "starting_price": starting if starting != "N/A" else "$15/month",
             "key_features": features,
             "source_url": url,
-            "browser_path": "text+heuristic",
         }
 
     def _parse_replit(self, text: str, url: str) -> Dict:
@@ -513,7 +536,6 @@ class BrowserSkill:
             "starting_price": starting if starting != "N/A" else "$20/month",
             "key_features": features,
             "source_url": url,
-            "browser_path": "text+heuristic",
         }
 
     def _parse_tabnine(self, text: str, url: str) -> Dict:
@@ -538,7 +560,6 @@ class BrowserSkill:
             "starting_price": starting if starting != "N/A" else "$12/month",
             "key_features": features,
             "source_url": url,
-            "browser_path": "text+heuristic",
         }
 
     def _parse_generic(self, text: str, url: str) -> Dict:
